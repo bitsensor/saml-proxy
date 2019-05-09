@@ -78,6 +78,9 @@ else
             "  mellon_create_metadata.sh ${SCHEMA}://${HOST} ${SCHEMA}://${HOST}/${MELLON_PATH}\n\n" \
             "--------------------------------------------------\n"
     /usr/sbin/mellon_create_metadata.sh ${SCHEMA}://${HOST} ${SCHEMA}://${HOST}/${MELLON_PATH}
+    mv ${SCHEMA}_${HOST}.cert saml_sp.cert -f
+    mv ${SCHEMA}_${HOST}.key saml_sp.key -f
+    mv ${SCHEMA}_${HOST}.xml saml_sp.xml -f
     popd
 fi
 
@@ -98,7 +101,7 @@ done
 export REQUEST_HEADERS
 
 # configure Apache proxy and auth
-cat /etc/httpd/conf.d/proxy.conf.template | envsubst '$SCHEMA,$HOST,$BACKEND,$MELLON_PATH,$REQUEST_HEADERS' > /etc/httpd/conf.d/proxy.conf
+cat /etc/httpd/conf.d/proxy.conf.template | envsubst '$SCHEMA,$HOST,$BACKEND,$MELLON_PATH,$REQUEST_HEADERS,$CUSTOM_CONFIG' > /etc/httpd/conf.d/proxy.conf
 
 # Start apache
-httpd -DFOREGROUND
+exec httpd -DFOREGROUND

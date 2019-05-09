@@ -1,21 +1,18 @@
-FROM fedora:23
-MAINTAINER matt@parr.geek.nz
+FROM centos:7
+LABEL maintainer="khanh@bitsensor.io"
 
-RUN dnf install -y \
-  apr-util-openssl \
-  authconfig \
+RUN yum install -y \
+  openssl \
   httpd \
-  mod_auth_gssapi \
-  mod_auth_kerb \
   mod_auth_mellon \
-  mod_intercept_form_submit \
-  mod_session \
   mod_ssl \
   gettext \
-  && dnf clean all
+  wget \
+  && yum clean all
 
 # Add mod_auth_mellon setup script
-ADD mellon_create_metadata.sh /usr/sbin/mellon_create_metadata.sh
+ADD https://raw.githubusercontent.com/Uninett/mod_auth_mellon/master/mellon_create_metadata.sh /usr/sbin/mellon_create_metadata.sh
+RUN chmod +x /usr/sbin/mellon_create_metadata.sh
 
 # Add conf file for Apache
 ADD proxy.conf /etc/httpd/conf.d/proxy.conf.template
